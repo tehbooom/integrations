@@ -21,9 +21,6 @@
                     "change"
                 ]
             },
-            "group": {
-                "name": "{0AB54C97-8836-43BB-9B53-   87556DD51F30}"
-            },
             "host": {
                 "name": "DC01.contoso.local"
             },
@@ -33,27 +30,26 @@
             "related": {
                 "user": [
                     "dadmin",
-                    "{0AB54C97-8836-43BB-9B53-   87556DD51F30}"
+                    "Smith, John"
                 ]
             },
             "user": {
                 "domain": "CONTOSO",
                 "id": "S-1-5-21-3457937927-2839227994-823803824-1104",
-                "name": "dadmin"
+                "name": "dadmin",
+                "target": {
+                    "name": "Smith, John"
+                }
             },
             "winlog": {
                 "channel": "Security",
                 "computer_name": "DC01.contoso.local",
                 "event_data": {
                     "AppCorrelationID": "{ff320a1e-447a}",
-                    "AttributeLDAPDisplayName": "versionNumber",
-                    "AttributeSyntaxOID": "2.5.5.9",
-                    "AttributeValue": "4",
-                    "DSName": "sample.com",
+                    "DSName": "example.com",
                     "DSType": "Active Directory Domain Services",
-                    "ObjectClass": "groupPolicyContainer",
-                    "ObjectDN": "cn={0AB54C97-8836-43BB-9B53-   87556DD51F30},cn=policies,cn=system,DC=sample,DC=com",
-                    "ObjectGUID": "CN={0AB54C97-8836-43BB-9B53-   87556DD51F30},CN=Policies,CN=System,DC=acme,DC=com",
+                    "ObjectClass": "user",
+                    "ObjectDN": "CN=Smith\\, John,OU=Users,DC=example,DC=com",
                     "OpCorrelationID": "{ff320a1e-447a-4bb1-9196-bb3469a00b55}",
                     "OperationType": "Value Added",
                     "SubjectDomainName": "CONTOSO",
