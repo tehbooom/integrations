@@ -194,7 +194,13 @@ processors:
         - ISO8601
       ignore_failure: true
   - set:
-      tag: set_timestamp
+      tag: set_timestamp_modified
+      field: "@timestamp"
+      copy_from: event.modified
+      ignore_empty_value: true
+  - set:
+      tag: set_timestamp_start
+      if: ctx.event?.modified == null
       field: "@timestamp"
       copy_from: event.start
       ignore_empty_value: true
