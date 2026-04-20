@@ -135,4 +135,4 @@
     - name: affected_area
       type: geo_shape
       description: >-
-        GeoJSON polygon or multipolygon representing the affected area of the disaster.
+        Polygon or multipolygon representing the affected area of the disaster.

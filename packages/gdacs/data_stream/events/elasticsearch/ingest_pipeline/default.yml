@@ -231,6 +231,51 @@ processors:
       lang: painless
       description: "Extract centroid geo_point and optional polygon geo_shape."
       source: |
+        String gdacsRingToWkt(def ring) {
+          StringBuilder builder = new StringBuilder();
+          builder.append("(");
+          for (int i = 0; i < ring.size(); i++) {
+            if (i > 0) { builder.append(", "); }
+            def point = ring[i];
+            builder.append(point[0].toString());
+            builder.append(" ");
+            builder.append(point[1].toString());
+          }
+          builder.append(")");
+          return builder.toString();
+        }
+
+        String gdacsPolygonToWkt(def rings) {
+          StringBuilder builder = new StringBuilder();
+          builder.append("(");
+          for (int i = 0; i < rings.size(); i++) {
+            if (i > 0) { builder.append(", "); }
+            builder.append(gdacsRingToWkt(rings[i]));
+          }
+          builder.append(")");
+          return builder.toString();
+        }
+
+        String gdacsShapeToWkt(def geom) {
+          if (geom == null || geom.coordinates == null || geom.type == null) {
+            return null;
+          }
+          if (geom.type == "Polygon") {
+            return "POLYGON " + gdacsPolygonToWkt(geom.coordinates);
+          }
+          if (geom.type == "MultiPolygon") {
+            StringBuilder builder = new StringBuilder();
+            builder.append("MULTIPOLYGON (");
+            for (int i = 0; i < geom.coordinates.size(); i++) {
+              if (i > 0) { builder.append(", "); }
+              builder.append(gdacsPolygonToWkt(geom.coordinates[i]));
+            }
+            builder.append(")");
+            return builder.toString();
+          }
+          return null;
+        }
+
         if (ctx.geo == null) { ctx.geo = new HashMap(); }
 
         // Extract centroid from the event-level Point geometry.
@@ -248,7 +293,7 @@ processors:
           String polyType = polyGeom.type;
           if (polyType == "Polygon" || polyType == "MultiPolygon") {
             if (ctx.gdacs == null) { ctx.gdacs = new HashMap(); }
-            ctx.gdacs.affected_area = polyGeom;
+            ctx.gdacs.affected_area = gdacsShapeToWkt(polyGeom);
 
             // Update class and polygon_label from enrichment if present.
             if (ctx.polygon_class != null) { ctx.gdacs.class = ctx.polygon_class; }
