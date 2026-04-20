@@ -113,6 +113,21 @@ processors:
       target_field: gdacs.polygon_label
       ignore_missing: true
   - rename:
+      tag: rename_geometry_doc
+      field: geometry_doc
+      target_field: gdacs.geometry_doc
+      ignore_missing: true
+  - rename:
+      tag: rename_geometry_id
+      field: geometry_id
+      target_field: gdacs.geometry_id
+      ignore_missing: true
+  - rename:
+      tag: rename_geometry_role
+      field: geometry_role
+      target_field: gdacs.geometry_role
+      ignore_missing: true
+  - rename:
       tag: rename_icon
       field: properties.icon
       target_field: gdacs.icon
@@ -260,6 +275,19 @@ processors:
           if (geom == null || geom.coordinates == null || geom.type == null) {
             return null;
           }
+          if (geom.type == "LineString") {
+            return "LINESTRING " + gdacsRingToWkt(geom.coordinates);
+          }
+          if (geom.type == "MultiLineString") {
+            StringBuilder builder = new StringBuilder();
+            builder.append("MULTILINESTRING (");
+            for (int i = 0; i < geom.coordinates.size(); i++) {
+              if (i > 0) { builder.append(", "); }
+              builder.append(gdacsRingToWkt(geom.coordinates[i]));
+            }
+            builder.append(")");
+            return builder.toString();
+          }
           if (geom.type == "Polygon") {
             return "POLYGON " + gdacsPolygonToWkt(geom.coordinates);
           }
@@ -291,9 +319,10 @@ processors:
         def polyGeom = ctx.polygon_geometry;
         if (polyGeom != null) {
           String polyType = polyGeom.type;
-          if (polyType == "Polygon" || polyType == "MultiPolygon") {
+          if (polyType == "Polygon" || polyType == "MultiPolygon" || polyType == "LineString" || polyType == "MultiLineString") {
             if (ctx.gdacs == null) { ctx.gdacs = new HashMap(); }
             ctx.gdacs.affected_area = gdacsShapeToWkt(polyGeom);
+            ctx.gdacs.geometry_type = polyType;
 
             // Update class and polygon_label from enrichment if present.
             if (ctx.polygon_class != null) { ctx.gdacs.class = ctx.polygon_class; }
@@ -448,11 +477,19 @@ processors:
   #
   # ── Composite event.id ──
   #
-  - set:
+  - script:
       tag: set_event_id
-      field: event.id
-      value: "{{{gdacs.event_id}}}-{{{gdacs.episode_id}}}"
-      ignore_failure: true
+      lang: painless
+      description: "Build a stable event.id; geometry child docs include their GDACS geometry id."
+      source: |
+        if (ctx.event == null) { ctx.event = new HashMap(); }
+        def parts = new ArrayList();
+        if (ctx.gdacs?.event_id != null) { parts.add(ctx.gdacs.event_id.toString()); }
+        if (ctx.gdacs?.episode_id != null) { parts.add(ctx.gdacs.episode_id.toString()); }
+        if (ctx.gdacs?.geometry_id != null) { parts.add(ctx.gdacs.geometry_id.toString()); }
+        if (parts.size() > 0) {
+          ctx.event.id = String.join("-", parts);
+        }
   - fingerprint:
       tag: fingerprint_event_id
       fields:
@@ -497,6 +534,9 @@ processors:
         - polygon_geometry
         - polygon_class
         - polygon_label
+        - geometry_doc
+        - geometry_id
+        - geometry_role
       ignore_missing: true
   - remove:
       tag: remove_message

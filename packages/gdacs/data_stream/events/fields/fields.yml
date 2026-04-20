@@ -87,6 +87,22 @@
     - name: polygon_label
       type: keyword
       description: Label for the geometry type (Centroid, Affected Area).
+    - name: geometry_doc
+      type: boolean
+      description: >-
+        True when the document is a child geometry feature emitted from the
+        GDACS geometry API for a parent event.
+    - name: geometry_id
+      type: keyword
+      description: Stable identifier for a GDACS child geometry feature.
+    - name: geometry_role
+      type: keyword
+      description: >-
+        Logical role for a GDACS child geometry feature, such as wind, cone, or
+        track.
+    - name: geometry_type
+      type: keyword
+      description: GeoJSON geometry type for the GDACS child geometry feature.
     - name: icon
       type: keyword
       description: URL to the GDACS map icon for this event.
@@ -135,4 +151,5 @@
     - name: affected_area
       type: geo_shape
       description: >-
-        Polygon or multipolygon representing the affected area of the disaster.
+        Geo shape representing the affected area or child geometry feature of
+        the disaster.

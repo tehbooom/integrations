@@ -121,7 +121,7 @@ The `events` data stream provides natural disaster alert events from the GDACS S
 | event.start | `event.start` contains the date when the event started or when the activity was first observed. | date |
 | event.type | This is one of four ECS Categorization Fields, and indicates the third level in the ECS category hierarchy. `event.type` represents a categorization "sub-bucket" that, when used along with the `event.category` field values, enables filtering events down to a level appropriate for single visualization. This field is an array. This will allow proper categorization of some events that fall in multiple event types. | keyword |
 | event.url | URL linking to an external system to continue investigation of this event. This URL links to another system where in-depth investigation of the specific occurrence of this event can take place. Alert events, indicated by `event.kind:alert`, are a common use case for this field. | keyword |
-| gdacs.affected_area | Polygon or multipolygon representing the affected area of the disaster. | geo_shape |
+| gdacs.affected_area | Geo shape representing the affected area or child geometry feature of the disaster. | geo_shape |
 | gdacs.affected_countries | Array of affected country objects with iso2, iso3, and countryname fields. | object |
 | gdacs.affected_country_iso2 | List of affected country ISO 3166-1 alpha-2 codes. | keyword |
 | gdacs.affected_country_iso3 | List of affected country ISO 3166-1 alpha-3 codes. | keyword |
@@ -138,6 +138,10 @@ The `events` data stream provides natural disaster alert events from the GDACS S
 | gdacs.event_name | GDACS internal event name. | keyword |
 | gdacs.event_type | GDACS event type code: EQ (Earthquake), TC (Tropical Cyclone), FL (Flood), VO (Volcano), DR (Drought), WF (Wildfire). | keyword |
 | gdacs.event_type_name | Human-readable name for the GDACS event type. | keyword |
+| gdacs.geometry_doc | True when the document is a child geometry feature emitted from the GDACS geometry API for a parent event. | boolean |
+| gdacs.geometry_id | Stable identifier for a GDACS child geometry feature. | keyword |
+| gdacs.geometry_role | Logical role for a GDACS child geometry feature, such as wind, cone, or track. | keyword |
+| gdacs.geometry_type | GeoJSON geometry type for the GDACS child geometry feature. | keyword |
 | gdacs.glide | GLobal IDEntifier (GLIDE) number for the disaster (e.g. DR-2023-000204-BRA). | keyword |
 | gdacs.html_description | HTML-formatted description with alert level and date range. | text |
 | gdacs.icon | URL to the GDACS map icon for this event. | keyword |
