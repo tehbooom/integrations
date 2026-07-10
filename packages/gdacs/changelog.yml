@@ -1,0 +1,22 @@
+# newer versions go on top
+- version: "0.0.3"
+  changes:
+    - description: Emit tropical cyclone wind band, cone, and track geometry child documents.
+      type: bugfix
+      link: https://github.com/matthecarl/integrations-gdacs/tree/hotfix/gdacs-current-events
+    - description: Add geometry-aware event identifiers for GDACS child geometry documents.
+      type: bugfix
+      link: https://github.com/matthecarl/integrations-gdacs/tree/hotfix/gdacs-current-events
+- version: "0.0.2"
+  changes:
+    - description: Use GDACS modified time for event timestamps.
+      type: bugfix
+      link: https://github.com/matthecarl/integrations-gdacs/commit/a205d33ab4
+    - description: Emit affected-area geo_shape values as WKT.
+      type: bugfix
+      link: https://github.com/matthecarl/integrations-gdacs/commit/c0be3c16a2
+- version: "0.0.1"
+  changes:
+    - description: Initial draft of the package
+      type: enhancement
+      link: https://github.com/elastic/integrations/pull/1 # FIXME Replace with the real PR link
